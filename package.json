@@ -40,6 +40,14 @@
   ],
   "license": "MIT",
   "author": "JLG Consulting",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jlguenego/jlgstat.git"
+  },
+  "homepage": "https://github.com/jlguenego/jlgstat#readme",
+  "bugs": {
+    "url": "https://github.com/jlguenego/jlgstat/issues"
+  },
   "dependencies": {
     "ignore": "^7.0.5",
     "picocolors": "^1.1.1"
