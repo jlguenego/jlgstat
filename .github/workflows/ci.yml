@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: ${{ matrix.os }} / Node ${{ matrix.node }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      # Node.js is the runtime of the published CLI (npx): the packed package runs on it.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: bun install --frozen-lockfile
+      - run: bun run typecheck
+      - run: bun run build
+      - run: bun run test
+      - name: Test the packed npm package with Node.js
+        run: bun run test:pack
+
+  oracle:
+    name: Line counts vs scc
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile && bun run build
+      - name: Install scc
+        run: |
+          curl -sSL https://github.com/boyter/scc/releases/download/v3.5.0/scc_Linux_x86_64.tar.gz | tar -xz -C /usr/local/bin scc
+      - name: Compare on the jlgstat sources
+        run: bun scripts/compare-scc.mjs src --tolerance 0.02

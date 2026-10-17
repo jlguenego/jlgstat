@@ -1,0 +1,62 @@
+# Development environment for jlgstat (https://mise.jdx.dev).
+#   mise install         install the tools below
+#   mise tasks           list the tasks
+#   mise run <task>      run a task (e.g. `mise run test`)
+#
+# Tasks delegate to the package.json scripts, which stay the single source of truth.
+
+[tools]
+# Package manager, script runner and test runner for development.
+bun = "1.4.2"
+# Runtime of the published CLI (npx): used by test:pack and bench.
+# engines.node is ">=22"; CI also covers 22.
+node = "24"
+# Test oracle for line counts (compare:scc); same version as the CI.
+"aqua:boyter/scc" = "3.5.0"
+
+[tasks.install]
+description = "Install dependencies from bun.lock"
+run = "bun install --frozen-lockfile"
+
+[tasks.build]
+description = "Compile TypeScript to dist/ (ESM)"
+depends = ["install"]
+run = "bun run build"
+sources = ["src/**/*.ts", "tsconfig.json", "tsconfig.build.json"]
+outputs = ["dist/**/*.js"]
+
+[tasks.typecheck]
+description = "Type-check sources and tests"
+depends = ["install"]
+run = "bun run typecheck"
+
+[tasks.test]
+description = "Run the tests (bun test), including the compiled-binary tests"
+depends = ["build"]
+run = "bun run test"
+
+[tasks."test:pack"]
+description = "Pack the npm package, install it and run the real binary with Node.js"
+depends = ["install"]
+run = "bun run test:pack"
+
+[tasks.bench]
+description = "Benchmark the CLI on generated corpora; optional sizes, e.g. `mise run bench 10000`"
+depends = ["build"]
+run = "bun run bench"
+
+[tasks."compare:scc"]
+description = "Confront line counts with scc, e.g. `mise run compare:scc src --tolerance 0.02`"
+depends = ["build"]
+run = "bun run compare:scc"
+
+[tasks.example]
+description = "Regenerate schema/example.json from the jlgstat sources"
+depends = ["build"]
+run = "bun run example"
+
+[tasks.ci]
+description = "Run what the CI runs: typecheck, build, tests and package test"
+# test:pack rebuilds dist/ (prepack), so it runs after the tests, not alongside them.
+depends = ["typecheck", "test"]
+run = "bun run test:pack"

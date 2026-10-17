@@ -1,0 +1,435 @@
+{
+  "schemaVersion": "1.1",
+  "toolVersion": "1.0.0",
+  "credit": "jlgstat: an idea by Jean-Louis GUENEGO (JLG), developed with AI.",
+  "root": "src",
+  "scan": {
+    "mode": "default",
+    "durationMs": 21,
+    "complete": true,
+    "warnings": [],
+    "excludedCount": 0,
+    "excludedBreakdown": {
+      "defaultRules": 0,
+      "gitignore": 0,
+      "include": 0,
+      "exclude": 0,
+      "symlinks": 0,
+      "specialFiles": 0
+    },
+    "defaultExcludedPaths": [],
+    "defaultExcludes": [
+      ".git/",
+      ".hg/",
+      ".svn/",
+      "node_modules/",
+      ".next/",
+      ".nuxt/",
+      ".svelte-kit/",
+      ".turbo/",
+      ".parcel-cache/",
+      ".cache/",
+      "dist/",
+      "build/",
+      "out/",
+      "coverage/",
+      ".nyc_output/",
+      "storybook-static/",
+      "__pycache__/",
+      ".venv/",
+      "venv/",
+      ".tox/",
+      ".mypy_cache/",
+      ".pytest_cache/",
+      ".ruff_cache/",
+      ".gradle/",
+      "vendor/",
+      ".bundle/",
+      ".terraform/",
+      "*.egg-info/",
+      "bin/ (next to *.csproj, *.fsproj, *.vbproj or *.sln)",
+      "obj/ (next to *.csproj, *.fsproj, *.vbproj or *.sln)",
+      "target/ (next to Cargo.toml, pom.xml, build.gradle or build.gradle.kts)",
+      ".DS_Store",
+      "Thumbs.db"
+    ],
+    "gitignore": true,
+    "include": [],
+    "exclude": [],
+    "caseInsensitiveGlobs": true
+  },
+  "summary": {
+    "files": 25,
+    "textFiles": 25,
+    "binaryFiles": 0,
+    "unreadableFiles": 0,
+    "directories": 10,
+    "maxDepth": 1,
+    "bytes": 109119,
+    "physicalLines": 3166,
+    "nonEmptyLines": 2901,
+    "blankLines": 265,
+    "codeLines": 2690,
+    "commentLines": 211,
+    "syntaxCoveredLines": 3166,
+    "classifiedSourceLines": 3166,
+    "extensions": 1,
+    "languages": 1,
+    "encodings": {
+      "utf-8": 25
+    }
+  },
+  "byExtension": [
+    {
+      "extension": ".ts",
+      "files": 25,
+      "textFiles": 25,
+      "binaryFiles": 0,
+      "bytes": 109119,
+      "physicalLines": 3166,
+      "nonEmptyLines": 2901,
+      "commentLines": 211,
+      "codeLines": 2690,
+      "shareOfPhysicalLines": 1,
+      "meanLinesPerFile": 126.64
+    }
+  ],
+  "byLanguage": [
+    {
+      "language": "TypeScript",
+      "extensions": [
+        ".ts"
+      ],
+      "files": 25,
+      "bytes": 109119,
+      "physicalLines": 3166,
+      "nonEmptyLines": 2901,
+      "commentLines": 211,
+      "codeLines": 2690,
+      "shareOfPhysicalLines": 1
+    }
+  ],
+  "distribution": {
+    "textFiles": 25,
+    "mean": 126.64,
+    "p50": 88,
+    "p90": 303,
+    "p99": 405,
+    "max": 405,
+    "over500": 0,
+    "over1000": 0,
+    "over5000": 0,
+    "top10LineShare": 0.7349968414403032
+  },
+  "largestFiles": [
+    {
+      "path": "report/terminal.ts",
+      "extension": ".ts",
+      "physicalLines": 405,
+      "bytes": 15084,
+      "category": "sources",
+      "encoding": "utf-8"
+    },
+    {
+      "path": "syntax/lineAnalyzer.ts",
+      "extension": ".ts",
+      "physicalLines": 398,
+      "bytes": 13576,
+      "category": "sources",
+      "encoding": "utf-8"
+    },
+    {
+      "path": "scan/walker.ts",
+      "extension": ".ts",
+      "physicalLines": 303,
+      "bytes": 10712,
+      "category": "sources",
+      "encoding": "utf-8"
+    },
+    {
+      "path": "aggregate/aggregate.ts",
+      "extension": ".ts",
+      "physicalLines": 266,
+      "bytes": 8967,
+      "category": "sources",
+      "encoding": "utf-8"
+    },
+    {
+      "path": "report/model.ts",
+      "extension": ".ts",
+      "physicalLines": 235,
+      "bytes": 5839,
+      "category": "sources",
+      "encoding": "utf-8"
+    },
+    {
+      "path": "syntax/languages.ts",
+      "extension": ".ts",
+      "physicalLines": 209,
+      "bytes": 8870,
+      "category": "sources",
+      "encoding": "utf-8"
+    },
+    {
+      "path": "cli/run.ts",
+      "extension": ".ts",
+      "physicalLines": 144,
+      "bytes": 4650,
+      "category": "sources",
+      "encoding": "utf-8"
+    },
+    {
+      "path": "compare/compare.ts",
+      "extension": ".ts",
+      "physicalLines": 132,
+      "bytes": 5359,
+      "category": "sources",
+      "encoding": "utf-8"
+    },
+    {
+      "path": "cli/args.ts",
+      "extension": ".ts",
+      "physicalLines": 121,
+      "bytes": 4276,
+      "category": "sources",
+      "encoding": "utf-8"
+    },
+    {
+      "path": "classify/category.ts",
+      "extension": ".ts",
+      "physicalLines": 114,
+      "bytes": 3774,
+      "category": "sources",
+      "encoding": "utf-8"
+    }
+  ],
+  "largestDirectories": [
+    {
+      "path": "report",
+      "depth": 1,
+      "files": 5,
+      "bytes": 26174,
+      "physicalLines": 808,
+      "nonEmptyLines": 745
+    },
+    {
+      "path": "syntax",
+      "depth": 1,
+      "files": 2,
+      "bytes": 22446,
+      "physicalLines": 607,
+      "nonEmptyLines": 563
+    },
+    {
+      "path": "scan",
+      "depth": 1,
+      "files": 3,
+      "bytes": 15653,
+      "physicalLines": 458,
+      "nonEmptyLines": 416
+    },
+    {
+      "path": "read",
+      "depth": 1,
+      "files": 5,
+      "bytes": 12590,
+      "physicalLines": 347,
+      "nonEmptyLines": 318
+    },
+    {
+      "path": "cli",
+      "depth": 1,
+      "files": 3,
+      "bytes": 9729,
+      "physicalLines": 292,
+      "nonEmptyLines": 265
+    },
+    {
+      "path": "aggregate",
+      "depth": 1,
+      "files": 1,
+      "bytes": 8967,
+      "physicalLines": 266,
+      "nonEmptyLines": 248
+    },
+    {
+      "path": "classify",
+      "depth": 1,
+      "files": 3,
+      "bytes": 6658,
+      "physicalLines": 202,
+      "nonEmptyLines": 179
+    },
+    {
+      "path": "compare",
+      "depth": 1,
+      "files": 1,
+      "bytes": 5359,
+      "physicalLines": 132,
+      "nonEmptyLines": 117
+    },
+    {
+      "path": "util",
+      "depth": 1,
+      "files": 1,
+      "bytes": 804,
+      "physicalLines": 34,
+      "nonEmptyLines": 31
+    },
+    {
+      "path": "io",
+      "depth": 1,
+      "files": 1,
+      "bytes": 739,
+      "physicalLines": 20,
+      "nonEmptyLines": 19
+    }
+  ],
+  "directories": [
+    {
+      "path": "aggregate",
+      "depth": 1,
+      "files": 1,
+      "bytes": 8967,
+      "physicalLines": 266,
+      "nonEmptyLines": 248
+    },
+    {
+      "path": "classify",
+      "depth": 1,
+      "files": 3,
+      "bytes": 6658,
+      "physicalLines": 202,
+      "nonEmptyLines": 179
+    },
+    {
+      "path": "cli",
+      "depth": 1,
+      "files": 3,
+      "bytes": 9729,
+      "physicalLines": 292,
+      "nonEmptyLines": 265
+    },
+    {
+      "path": "compare",
+      "depth": 1,
+      "files": 1,
+      "bytes": 5359,
+      "physicalLines": 132,
+      "nonEmptyLines": 117
+    },
+    {
+      "path": "io",
+      "depth": 1,
+      "files": 1,
+      "bytes": 739,
+      "physicalLines": 20,
+      "nonEmptyLines": 19
+    },
+    {
+      "path": "read",
+      "depth": 1,
+      "files": 5,
+      "bytes": 12590,
+      "physicalLines": 347,
+      "nonEmptyLines": 318
+    },
+    {
+      "path": "report",
+      "depth": 1,
+      "files": 5,
+      "bytes": 26174,
+      "physicalLines": 808,
+      "nonEmptyLines": 745
+    },
+    {
+      "path": "scan",
+      "depth": 1,
+      "files": 3,
+      "bytes": 15653,
+      "physicalLines": 458,
+      "nonEmptyLines": 416
+    },
+    {
+      "path": "syntax",
+      "depth": 1,
+      "files": 2,
+      "bytes": 22446,
+      "physicalLines": 607,
+      "nonEmptyLines": 563
+    },
+    {
+      "path": "util",
+      "depth": 1,
+      "files": 1,
+      "bytes": 804,
+      "physicalLines": 34,
+      "nonEmptyLines": 31
+    }
+  ],
+  "rootFiles": {
+    "files": 0,
+    "bytes": 0,
+    "physicalLines": 0,
+    "nonEmptyLines": 0
+  },
+  "categories": [
+    {
+      "category": "generated",
+      "files": 0,
+      "bytes": 0,
+      "physicalLines": 0,
+      "nonEmptyLines": 0,
+      "shareOfPhysicalLines": 0
+    },
+    {
+      "category": "tests",
+      "files": 0,
+      "bytes": 0,
+      "physicalLines": 0,
+      "nonEmptyLines": 0,
+      "shareOfPhysicalLines": 0
+    },
+    {
+      "category": "documentation",
+      "files": 0,
+      "bytes": 0,
+      "physicalLines": 0,
+      "nonEmptyLines": 0,
+      "shareOfPhysicalLines": 0
+    },
+    {
+      "category": "configuration",
+      "files": 0,
+      "bytes": 0,
+      "physicalLines": 0,
+      "nonEmptyLines": 0,
+      "shareOfPhysicalLines": 0
+    },
+    {
+      "category": "sources",
+      "files": 25,
+      "bytes": 109119,
+      "physicalLines": 3166,
+      "nonEmptyLines": 2901,
+      "shareOfPhysicalLines": 1
+    },
+    {
+      "category": "other",
+      "files": 0,
+      "bytes": 0,
+      "physicalLines": 0,
+      "nonEmptyLines": 0,
+      "shareOfPhysicalLines": 0
+    },
+    {
+      "category": "unknown",
+      "files": 0,
+      "bytes": 0,
+      "physicalLines": 0,
+      "nonEmptyLines": 0,
+      "shareOfPhysicalLines": 0
+    }
+  ],
+  "comparison": null
+}

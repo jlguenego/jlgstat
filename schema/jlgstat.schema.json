@@ -1,0 +1,314 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.npmjs.com/package/jlgstat/schema/1.1",
+  "title": "jlgstat report",
+  "description": "JSON report produced by `jlgstat --json` (schema 1.x). Minor versions only add fields: consumers must ignore unknown fields.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "toolVersion",
+    "root",
+    "scan",
+    "summary",
+    "byExtension",
+    "byLanguage",
+    "distribution",
+    "largestFiles",
+    "largestDirectories",
+    "directories",
+    "rootFiles",
+    "categories",
+    "comparison"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "string", "pattern": "^1\\.\\d+$" },
+    "toolVersion": { "type": "string" },
+    "credit": { "type": "string", "description": "Authorship notice (added in schema 1.1)." },
+    "root": { "type": "string", "description": "Analyzed directory, relative to the working directory." },
+    "scan": {
+      "type": "object",
+      "required": [
+        "mode",
+        "durationMs",
+        "complete",
+        "warnings",
+        "excludedCount",
+        "excludedBreakdown",
+        "defaultExcludedPaths",
+        "defaultExcludes",
+        "gitignore",
+        "include",
+        "exclude",
+        "caseInsensitiveGlobs"
+      ],
+      "properties": {
+        "mode": { "enum": ["default", "all"] },
+        "durationMs": { "$ref": "#/definitions/count" },
+        "complete": { "type": "boolean" },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["code", "path", "message"],
+            "properties": {
+              "code": {
+                "enum": [
+                  "unreadable-file",
+                  "unreadable-directory",
+                  "vanished-file",
+                  "vanished-directory",
+                  "large-file",
+                  "symlink-directory-skipped",
+                  "symlink-outside-root-skipped",
+                  "symlink-broken-skipped",
+                  "special-file-skipped"
+                ]
+              },
+              "path": { "type": "string" },
+              "message": { "type": "string" }
+            }
+          }
+        },
+        "excludedCount": { "$ref": "#/definitions/count" },
+        "excludedBreakdown": {
+          "type": "object",
+          "required": ["defaultRules", "gitignore", "include", "exclude", "symlinks", "specialFiles"],
+          "properties": {
+            "defaultRules": { "$ref": "#/definitions/count" },
+            "gitignore": { "$ref": "#/definitions/count" },
+            "include": { "$ref": "#/definitions/count" },
+            "exclude": { "$ref": "#/definitions/count" },
+            "symlinks": { "$ref": "#/definitions/count" },
+            "specialFiles": { "$ref": "#/definitions/count" }
+          }
+        },
+        "defaultExcludedPaths": { "$ref": "#/definitions/strings" },
+        "defaultExcludes": { "$ref": "#/definitions/strings" },
+        "gitignore": { "type": "boolean" },
+        "include": { "$ref": "#/definitions/strings" },
+        "exclude": { "$ref": "#/definitions/strings" },
+        "caseInsensitiveGlobs": { "type": "boolean" }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "files",
+        "textFiles",
+        "binaryFiles",
+        "unreadableFiles",
+        "directories",
+        "maxDepth",
+        "bytes",
+        "physicalLines",
+        "nonEmptyLines",
+        "blankLines",
+        "codeLines",
+        "commentLines",
+        "syntaxCoveredLines",
+        "classifiedSourceLines",
+        "extensions",
+        "languages",
+        "encodings"
+      ],
+      "properties": {
+        "files": { "$ref": "#/definitions/count" },
+        "textFiles": { "$ref": "#/definitions/count" },
+        "binaryFiles": { "$ref": "#/definitions/count" },
+        "unreadableFiles": { "$ref": "#/definitions/count" },
+        "directories": { "$ref": "#/definitions/count" },
+        "maxDepth": { "$ref": "#/definitions/count" },
+        "bytes": { "$ref": "#/definitions/count" },
+        "physicalLines": { "$ref": "#/definitions/count" },
+        "nonEmptyLines": { "$ref": "#/definitions/count" },
+        "blankLines": { "$ref": "#/definitions/count" },
+        "codeLines": { "$ref": "#/definitions/count" },
+        "commentLines": { "$ref": "#/definitions/count" },
+        "syntaxCoveredLines": { "$ref": "#/definitions/count" },
+        "classifiedSourceLines": { "$ref": "#/definitions/count" },
+        "extensions": { "$ref": "#/definitions/count" },
+        "languages": { "$ref": "#/definitions/count" },
+        "encodings": {
+          "type": "object",
+          "propertyNames": { "enum": ["utf-8", "utf-8-bom", "utf-16le", "utf-16be", "unknown-8bit"] },
+          "additionalProperties": { "$ref": "#/definitions/count" }
+        }
+      }
+    },
+    "byExtension": {
+      "type": "array",
+      "items": {
+        "allOf": [{ "$ref": "#/definitions/lineStats" }],
+        "type": "object",
+        "required": ["extension", "textFiles", "binaryFiles", "shareOfPhysicalLines", "meanLinesPerFile"],
+        "properties": {
+          "extension": { "type": "string" },
+          "textFiles": { "$ref": "#/definitions/count" },
+          "binaryFiles": { "$ref": "#/definitions/count" },
+          "shareOfPhysicalLines": { "$ref": "#/definitions/ratioOrNull" },
+          "meanLinesPerFile": { "type": ["number", "null"], "minimum": 0 }
+        }
+      }
+    },
+    "byLanguage": {
+      "type": "array",
+      "items": {
+        "allOf": [{ "$ref": "#/definitions/lineStats" }],
+        "type": "object",
+        "required": ["language", "extensions", "shareOfPhysicalLines"],
+        "properties": {
+          "language": { "type": "string" },
+          "extensions": { "$ref": "#/definitions/strings" },
+          "shareOfPhysicalLines": { "$ref": "#/definitions/ratioOrNull" }
+        }
+      }
+    },
+    "distribution": {
+      "type": "object",
+      "required": ["textFiles", "mean", "p50", "p90", "p99", "max", "over500", "over1000", "over5000", "top10LineShare"],
+      "properties": {
+        "textFiles": { "$ref": "#/definitions/count" },
+        "mean": { "type": ["number", "null"], "minimum": 0 },
+        "p50": { "$ref": "#/definitions/countOrNull" },
+        "p90": { "$ref": "#/definitions/countOrNull" },
+        "p99": { "$ref": "#/definitions/countOrNull" },
+        "max": { "$ref": "#/definitions/countOrNull" },
+        "over500": { "$ref": "#/definitions/count" },
+        "over1000": { "$ref": "#/definitions/count" },
+        "over5000": { "$ref": "#/definitions/count" },
+        "top10LineShare": { "$ref": "#/definitions/ratioOrNull" }
+      }
+    },
+    "largestFiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "extension", "physicalLines", "bytes", "category", "encoding"],
+        "properties": {
+          "path": { "type": "string" },
+          "extension": { "type": "string" },
+          "physicalLines": { "$ref": "#/definitions/count" },
+          "bytes": { "$ref": "#/definitions/count" },
+          "category": { "$ref": "#/definitions/category" },
+          "encoding": { "enum": ["utf-8", "utf-8-bom", "utf-16le", "utf-16be", "unknown-8bit", null] }
+        }
+      }
+    },
+    "largestDirectories": { "type": "array", "items": { "$ref": "#/definitions/directory" } },
+    "directories": { "type": "array", "items": { "$ref": "#/definitions/directory" } },
+    "rootFiles": {
+      "type": "object",
+      "required": ["files", "bytes", "physicalLines", "nonEmptyLines"],
+      "properties": {
+        "files": { "$ref": "#/definitions/count" },
+        "bytes": { "$ref": "#/definitions/count" },
+        "physicalLines": { "$ref": "#/definitions/count" },
+        "nonEmptyLines": { "$ref": "#/definitions/count" }
+      }
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["category", "files", "bytes", "physicalLines", "nonEmptyLines", "shareOfPhysicalLines"],
+        "properties": {
+          "category": { "$ref": "#/definitions/category" },
+          "files": { "$ref": "#/definitions/count" },
+          "bytes": { "$ref": "#/definitions/count" },
+          "physicalLines": { "$ref": "#/definitions/count" },
+          "nonEmptyLines": { "$ref": "#/definitions/count" },
+          "shareOfPhysicalLines": { "$ref": "#/definitions/ratioOrNull" }
+        }
+      }
+    },
+    "comparison": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "required": [
+            "baselineFile",
+            "baselineToolVersion",
+            "baselineSchemaVersion",
+            "homogeneous",
+            "differences",
+            "summary",
+            "byExtension",
+            "categories",
+            "directories"
+          ],
+          "properties": {
+            "baselineFile": { "type": "string" },
+            "baselineToolVersion": { "type": ["string", "null"] },
+            "baselineSchemaVersion": { "type": "string" },
+            "homogeneous": { "type": "boolean" },
+            "differences": { "$ref": "#/definitions/strings" },
+            "summary": { "type": "object", "additionalProperties": { "$ref": "#/definitions/delta" } },
+            "byExtension": {
+              "type": "array",
+              "items": { "allOf": [{ "$ref": "#/definitions/deltaRow" }], "required": ["extension"] }
+            },
+            "categories": {
+              "type": "array",
+              "items": { "allOf": [{ "$ref": "#/definitions/deltaRow" }], "required": ["category"] }
+            },
+            "directories": {
+              "type": "array",
+              "items": { "allOf": [{ "$ref": "#/definitions/deltaRow" }], "required": ["path"] }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "definitions": {
+    "count": { "type": "integer", "minimum": 0 },
+    "countOrNull": { "type": ["integer", "null"], "minimum": 0 },
+    "ratioOrNull": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+    "strings": { "type": "array", "items": { "type": "string" } },
+    "category": { "enum": ["generated", "tests", "documentation", "configuration", "sources", "other", "unknown"] },
+    "lineStats": {
+      "type": "object",
+      "required": ["files", "bytes", "physicalLines", "nonEmptyLines", "commentLines", "codeLines"],
+      "properties": {
+        "files": { "$ref": "#/definitions/count" },
+        "bytes": { "$ref": "#/definitions/count" },
+        "physicalLines": { "$ref": "#/definitions/count" },
+        "nonEmptyLines": { "$ref": "#/definitions/count" },
+        "commentLines": { "$ref": "#/definitions/countOrNull" },
+        "codeLines": { "$ref": "#/definitions/countOrNull" }
+      }
+    },
+    "directory": {
+      "type": "object",
+      "required": ["path", "depth", "files", "bytes", "physicalLines", "nonEmptyLines"],
+      "properties": {
+        "path": { "type": "string" },
+        "depth": { "type": "integer", "minimum": 1 },
+        "files": { "$ref": "#/definitions/count" },
+        "bytes": { "$ref": "#/definitions/count" },
+        "physicalLines": { "$ref": "#/definitions/count" },
+        "nonEmptyLines": { "$ref": "#/definitions/count" }
+      }
+    },
+    "delta": {
+      "type": "object",
+      "required": ["before", "after", "delta", "relative"],
+      "properties": {
+        "before": { "type": ["number", "null"] },
+        "after": { "type": ["number", "null"] },
+        "delta": { "type": ["number", "null"] },
+        "relative": { "type": ["number", "null"] }
+      }
+    },
+    "deltaRow": {
+      "type": "object",
+      "required": ["files", "physicalLines", "bytes"],
+      "properties": {
+        "files": { "$ref": "#/definitions/delta" },
+        "physicalLines": { "$ref": "#/definitions/delta" },
+        "bytes": { "$ref": "#/definitions/delta" }
+      }
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "name": "jlgstat",
+  "version": "1.0.0",
+  "description": "Quantitative X-ray of a software project: files, lines, extensions, distribution, largest files and directories. No config, no network, no LLM.",
+  "type": "module",
+  "bin": {
+    "jlgstat": "dist/cli/main.js"
+  },
+  "exports": {
+    "./schema.json": "./schema/jlgstat.schema.json"
+  },
+  "files": [
+    "dist",
+    "schema",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "bun test --timeout 30000",
+    "test:pack": "bun scripts/pack-test.mjs",
+    "bench": "bun bench/run.mjs",
+    "compare:scc": "bun scripts/compare-scc.mjs",
+    "example": "bun dist/cli/main.js src --json --quiet --output schema/example.json",
+    "prepack": "bun run build"
+  },
+  "keywords": [
+    "cli",
+    "statistics",
+    "loc",
+    "lines-of-code",
+    "cloc",
+    "sloc",
+    "repository",
+    "ai"
+  ],
+  "license": "MIT",
+  "author": "JLG Consulting",
+  "dependencies": {
+    "ignore": "^7.0.5",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.0",
+    "@types/node": "^22.15.0",
+    "ajv": "^8.17.1",
+    "typescript": "^5.8.3"
+  }
+}
