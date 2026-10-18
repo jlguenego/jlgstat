@@ -1,11 +1,11 @@
 {
   "schemaVersion": "1.2",
-  "toolVersion": "1.0.0",
+  "toolVersion": "1.1.0",
   "credit": "jlgstat: an idea by Jean-Louis GUENEGO (JLG), developed with AI.",
   "root": "src",
   "scan": {
     "mode": "default",
-    "durationMs": 23,
+    "durationMs": 22,
     "complete": true,
     "warnings": [],
     "excludedCount": 0,
@@ -65,14 +65,14 @@
     "unreadableFiles": 0,
     "directories": 11,
     "maxDepth": 1,
-    "bytes": 135870,
-    "physicalLines": 3834,
-    "nonEmptyLines": 3511,
+    "bytes": 136835,
+    "physicalLines": 3852,
+    "nonEmptyLines": 3529,
     "blankLines": 323,
-    "codeLines": 3244,
-    "commentLines": 267,
-    "syntaxCoveredLines": 3834,
-    "classifiedSourceLines": 3834,
+    "codeLines": 3259,
+    "commentLines": 270,
+    "syntaxCoveredLines": 3852,
+    "classifiedSourceLines": 3852,
     "extensions": 1,
     "languages": 1,
     "encodings": {
@@ -85,13 +85,13 @@
       "files": 29,
       "textFiles": 29,
       "binaryFiles": 0,
-      "bytes": 135870,
-      "physicalLines": 3834,
-      "nonEmptyLines": 3511,
-      "commentLines": 267,
-      "codeLines": 3244,
+      "bytes": 136835,
+      "physicalLines": 3852,
+      "nonEmptyLines": 3529,
+      "commentLines": 270,
+      "codeLines": 3259,
       "shareOfPhysicalLines": 1,
-      "meanLinesPerFile": 132.20689655172413
+      "meanLinesPerFile": 132.82758620689654
     }
   ],
   "byLanguage": [
@@ -101,17 +101,17 @@
         ".ts"
       ],
       "files": 29,
-      "bytes": 135870,
-      "physicalLines": 3834,
-      "nonEmptyLines": 3511,
-      "commentLines": 267,
-      "codeLines": 3244,
+      "bytes": 136835,
+      "physicalLines": 3852,
+      "nonEmptyLines": 3529,
+      "commentLines": 270,
+      "codeLines": 3259,
       "shareOfPhysicalLines": 1
     }
   ],
   "distribution": {
     "textFiles": 29,
-    "mean": 132.20689655172413,
+    "mean": 132.82758620689654,
     "p50": 104,
     "p90": 303,
     "p99": 406,
@@ -119,7 +119,7 @@
     "over500": 0,
     "over1000": 0,
     "over5000": 0,
-    "top10LineShare": 0.6768388106416275
+    "top10LineShare": 0.6757528556593977
   },
   "largestFiles": [
     {
@@ -157,8 +157,8 @@
     {
       "path": "remote/fetch.ts",
       "extension": ".ts",
-      "physicalLines": 251,
-      "bytes": 10319,
+      "physicalLines": 257,
+      "bytes": 10692,
       "category": "sources",
       "encoding": "utf-8"
     },
@@ -173,8 +173,8 @@
     {
       "path": "cli/run.ts",
       "extension": ".ts",
-      "physicalLines": 230,
-      "bytes": 7553,
+      "physicalLines": 232,
+      "bytes": 7770,
       "category": "sources",
       "encoding": "utf-8"
     },
@@ -224,9 +224,9 @@
       "path": "remote",
       "depth": 1,
       "files": 4,
-      "bytes": 21150,
-      "physicalLines": 532,
-      "nonEmptyLines": 480
+      "bytes": 21898,
+      "physicalLines": 548,
+      "nonEmptyLines": 496
     },
     {
       "path": "scan",
@@ -240,9 +240,9 @@
       "path": "cli",
       "depth": 1,
       "files": 3,
-      "bytes": 14520,
-      "physicalLines": 410,
-      "nonEmptyLines": 378
+      "bytes": 14737,
+      "physicalLines": 412,
+      "nonEmptyLines": 380
     },
     {
       "path": "read",
@@ -306,9 +306,9 @@
       "path": "cli",
       "depth": 1,
       "files": 3,
-      "bytes": 14520,
-      "physicalLines": 410,
-      "nonEmptyLines": 378
+      "bytes": 14737,
+      "physicalLines": 412,
+      "nonEmptyLines": 380
     },
     {
       "path": "compare",
@@ -338,9 +338,9 @@
       "path": "remote",
       "depth": 1,
       "files": 4,
-      "bytes": 21150,
-      "physicalLines": 532,
-      "nonEmptyLines": 480
+      "bytes": 21898,
+      "physicalLines": 548,
+      "nonEmptyLines": 496
     },
     {
       "path": "report",
@@ -417,9 +417,9 @@
     {
       "category": "sources",
       "files": 29,
-      "bytes": 135870,
-      "physicalLines": 3834,
-      "nonEmptyLines": 3511,
+      "bytes": 136835,
+      "physicalLines": 3852,
+      "nonEmptyLines": 3529,
       "shareOfPhysicalLines": 1
     },
     {

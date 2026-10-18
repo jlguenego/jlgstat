@@ -1,6 +1,6 @@
 {
   "name": "jlgstat",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Quantitative X-ray of a software project or Git repository URL: files, lines, extensions, distribution, largest files and directories. No config, no LLM.",
   "type": "module",
   "bin": {
