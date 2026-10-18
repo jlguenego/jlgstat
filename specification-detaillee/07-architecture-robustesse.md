@@ -38,9 +38,10 @@ Ces chiffres sont **des objectifs**, pas des garanties ; mesurer aussi les octet
 ## 10. Robustesse, confidentialité et codes de sortie
 
 - Aucune télémétrie, aucun envoi de fichiers ou de statistiques.
-- Lecture seule ; ne pas créer de fichiers sauf demande explicite `--output` ou redirection du shell.
+- Lecture seule ; ne pas créer de fichiers sauf demande explicite `--output` ou redirection du shell. Exception : l'analyse d'une URL (§3.4) écrit la copie du dépôt dans le cache de `jlgstat`, supprimée à la fin sauf `--keep-clone`.
+- Aucun appel réseau, sauf la récupération par `git` d'un dépôt dont l'utilisateur a donné l'URL (§3.4).
 - Éviter les chemins absolus et les informations personnelles dans les sorties JSON par défaut ; chemins relatifs au projet.
-- Ne jamais exécuter de code contenu dans le dépôt analysé.
+- Ne jamais exécuter de code contenu dans le dépôt analysé. Pour un dépôt récupéré par URL : aucun hook (`core.hooksPath` neutralisé), aucun filtre `.gitattributes` ni LFS, transport `ext::` interdit.
 - Les chemins avec espaces, Unicode, accents et caractères spéciaux doivent fonctionner.
 - Éviter les fuites de ressources, les boucles de liens symboliques et les blocages sur des fichiers inaccessibles.
 
@@ -49,7 +50,7 @@ Ces chiffres sont **des objectifs**, pas des garanties ; mesurer aussi les octet
 | Code | Signification |
 |---:|---|
 | `0` | Analyse complète réussie |
-| `1` | Erreur empêchant l'analyse : option invalide, chemin introuvable ou non répertoire, snapshot illisible ou incompatible, écriture `--output` impossible |
+| `1` | Erreur empêchant l'analyse : option invalide, chemin introuvable ou non répertoire, snapshot illisible ou incompatible, écriture `--output` impossible ; pour une URL : `git` absent, dépôt inaccessible, ref ou sous-dossier inexistant |
 | `2` | Rapport produit mais partiel : fichiers illisibles, fichiers disparus pendant l'analyse, erreurs d'accès |
 
 Les sorties partielles indiquent `complete: false` et détaillent les avertissements. Les liens ignorés, les fichiers spéciaux et les avertissements informatifs (gros fichiers) ne provoquent pas le code `2`.

@@ -4,7 +4,7 @@
 
 ## 1. Vision et objectifs
 
-`jlgstat` est un outil CLI npm permettant d'obtenir rapidement une radiographie **quantitative** d'un projet informatique, sans analyse sémantique, sans LLM, sans appel réseau par l'outil et sans configuration obligatoire.
+`jlgstat` est un outil CLI npm permettant d'obtenir rapidement une radiographie **quantitative** d'un projet informatique, sans analyse sémantique, sans LLM, sans appel réseau par l'outil (sauf pour récupérer un dépôt explicitement désigné par son URL, §3.4) et sans configuration obligatoire.
 
 Commande principale :
 
@@ -12,7 +12,11 @@ Commande principale :
 npx jlgstat .
 ```
 
-La commande `npx jlgstat` analyse le répertoire courant. L'argument facultatif désigne un répertoire à analyser.
+La commande `npx jlgstat` analyse le répertoire courant. L'argument facultatif désigne un répertoire à analyser, ou l'URL d'un dépôt Git (§3.4) :
+
+```bash
+npx jlgstat https://github.com/owner/repo
+```
 
 ### 1.1 Publics
 
@@ -26,8 +30,8 @@ La commande `npx jlgstat` analyse le répertoire courant. L'argument facultatif 
 - Une commande, sans assistant interactif ni fichier de configuration requis.
 - Rapport terminal immédiatement lisible, trié et synthétique.
 - Résultat déterministe pour un état de fichiers et des options donnés.
-- Windows, macOS et Linux ; Node.js/npm seuls prérequis.
-- Aucun fichier du projet modifié ; aucune donnée envoyée à un serveur par `jlgstat`.
+- Windows, macOS et Linux ; Node.js/npm seuls prérequis. La commande `git` n'est requise que pour analyser un dépôt par son URL (§3.4).
+- Aucun fichier du projet modifié ; aucune donnée envoyée à un serveur par `jlgstat`. Le seul accès réseau est la récupération, par `git`, d'un dépôt dont l'utilisateur a donné l'URL.
 - Pas de dépendance à un service d'IA ni de consommation de tokens pour calculer les statistiques. **La lecture ultérieure du rapport par une IA peut, elle, consommer des tokens.**
 
 ### 1.3 Hors périmètre

@@ -12,11 +12,13 @@ import {
 import { describeDefaultExcludes } from '../scan/defaultExcludes.js';
 import { CASE_INSENSITIVE_GLOBS } from '../scan/filters.js';
 import type { WalkResult } from '../scan/walker.js';
-import { CREDIT, PARTIAL_WARNINGS, type Report, SCHEMA_VERSION } from './model.js';
+import { CREDIT, PARTIAL_WARNINGS, type Report, type RepositorySource, SCHEMA_VERSION } from './model.js';
 
 export interface BuildOptions {
   toolVersion: string;
   root: string;
+  /** Remote repository, when a URL was analyzed. */
+  source?: RepositorySource;
   all: boolean;
   include: readonly string[];
   exclude: readonly string[];
@@ -35,6 +37,7 @@ export function buildReport(walk: WalkResult, o: BuildOptions): Report {
     toolVersion: o.toolVersion,
     credit: CREDIT,
     root: o.root,
+    ...(o.source ? { source: o.source } : {}),
     scan: {
       mode: o.all ? 'all' : 'default',
       durationMs: o.durationMs,

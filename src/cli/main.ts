@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { isatty } from 'node:tty';
 import { run } from './run.js';
 
 // All fs calls (main thread and analysis workers) share libuv's thread pool,
@@ -16,6 +17,7 @@ run(process.argv.slice(2), {
   env: process.env,
   stdoutIsTTY: process.stdout.isTTY === true,
   stdoutColumns: process.stdout.columns,
+  stdinIsTTY: isatty(0),
 }).then(
   (code) => {
     process.exitCode = code;

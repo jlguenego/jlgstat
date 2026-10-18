@@ -20,10 +20,11 @@
 - `--output` : écrasement, choix du format par extension, écriture atomique.
 - Comparaison avec zéro initial, snapshots non homogènes et version majeure incompatible.
 - Codes de sortie `0`, `1` et `2`.
+- Dépôt par URL (§3.4), sans réseau : dépôt Git créé à l'exécution et servi par une URL `file://` ; branche par défaut, `--ref` (branche, tag, SHA), sous-dossier et ref contenant `/`, priorité de `--ref`, fichiers comptés tels que stockés, absence de `.git` avec `--all`, suppression de la copie, `--keep-clone` puis réutilisation, `--clear-cache` global et ciblé, ref inexistante, `git` absent, identifiants masqués. En tests unitaires : reconnaissance des URLs (schémas, forme SCP, port, identifiants) et découpage des URLs de navigateur (GitHub, GitLab, Bitbucket).
 
 ### 11.2 Matrice de compatibilité
 
-CI sur Windows, macOS et Linux, avec Node.js 22 et 24 ; l'installation, le typage, le build et les tests passent par Bun (`bun install --frozen-lockfile`, `bun test`). Tests du binaire npm réellement packagé (`bun pm pack`, installation de l'archive, puis exécution du binaire installé sous Node.js), pas uniquement des scripts de développement.
+CI sur Windows, macOS et Linux, avec Node.js 22 et 24 ; l'installation, le typage, le build et les tests passent par Bun (`bun install --frozen-lockfile`, `bun test`). Tests du binaire npm réellement packagé (`bun pm pack`, installation de l'archive, puis exécution du binaire installé sous Node.js), pas uniquement des scripts de développement. `git` est requis sur la CI pour les tests de dépôt par URL ; ils sont ignorés s'il est absent.
 
 ### 11.3 Critères d'acceptation UX
 
@@ -31,7 +32,7 @@ CI sur Windows, macOS et Linux, avec Node.js 22 et 24 ; l'installation, le typag
 2. `npx jlgstat` analyse le dossier courant.
 3. Le rapport identifie immédiatement le volume total, les extensions dominantes et les fichiers/répertoires les plus volumineux.
 4. `--json` produit un objet JSON exploitable automatiquement, sans bruit stdout.
-5. Aucun fichier du projet n'est modifié et aucune donnée n'est transmise par l'outil.
+5. Aucun fichier du projet n'est modifié et aucune donnée n'est transmise par l'outil ; le seul accès réseau est la récupération d'un dépôt donné par URL.
 6. Les exclusions et les analyses partielles sont explicites.
 7. Les résultats sont reproductibles pour un même corpus, mêmes options et même version, quelle que soit la locale ou la configuration Git de la machine.
 8. Les performances sont mesurées et publiées sur des corpus représentatifs.

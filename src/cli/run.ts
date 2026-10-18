@@ -3,7 +3,11 @@ import { stat } from 'node:fs/promises';
 import path from 'node:path';
 import { compareReports, loadSnapshot, SnapshotError } from '../compare/compare.js';
 import { atomicWrite } from '../io/atomicWrite.js';
+import { cacheRoot, clearCache } from '../remote/cache.js';
+import { type PreparedRepo, prepareRepo } from '../remote/fetch.js';
+import { parseRepoArg, RemoteError, type RepoSpec } from '../remote/url.js';
 import { buildReport } from '../report/build.js';
+import { formatBytes, formatInt } from '../report/format.js';
 import type { Report } from '../report/model.js';
 import { createProgress } from '../report/progress.js';
 import { renderTerminal } from '../report/terminal.js';
@@ -21,6 +25,8 @@ export interface RunIO {
   env: Record<string, string | undefined>;
   stdoutIsTTY: boolean;
   stdoutColumns: number | undefined;
+  /** True when stdin is a terminal: git may then ask for credentials. */
+  stdinIsTTY?: boolean;
   progressStream?: NodeJS.WriteStream;
 }
 
@@ -40,8 +46,21 @@ function displayRoot(cwd: string, abs: string): string {
   return rel.split(path.sep).join('/');
 }
 
+/** Root of a remote analysis: the URL, followed by the analyzed subdirectory. */
+function remoteRoot(p: PreparedRepo): string {
+  return p.source.path === null ? p.source.url : `${p.source.url}/${p.source.path}`;
+}
+
 function errorMessage(err: unknown): string {
   return err instanceof Error ? err.message : String(err);
+}
+
+async function isDirectory(abs: string): Promise<boolean> {
+  try {
+    return (await stat(abs)).isDirectory();
+  } catch {
+    return false;
+  }
 }
 
 async function checkDirectory(abs: string, given: string): Promise<void> {
@@ -74,10 +93,41 @@ export async function run(argv: readonly string[], io: RunIO): Promise<number> {
     return EXIT_OK;
   }
 
-  const rootAbs = path.resolve(io.cwd, opts.path);
+  // A local directory wins over an argument that merely looks like a URL.
+  let rootAbs = path.resolve(io.cwd, opts.path);
+  let repo: RepoSpec | null = null;
+  try {
+    repo = parseRepoArg(opts.path);
+  } catch (err) {
+    if (!(err instanceof RemoteError)) throw err;
+    io.stderr(`jlgstat: error: ${err.message}\n`);
+    return EXIT_ERROR;
+  }
+  if (repo !== null && (await isDirectory(rootAbs))) {
+    if (opts.ref !== null || opts.keepClone || opts.clearCache) {
+      io.stderr(`jlgstat: error: ${opts.path} is a local directory; --ref, --keep-clone and --clear-cache apply to repository URLs\n`);
+      return EXIT_ERROR;
+    }
+    repo = null;
+  }
+
+  if (opts.clearCache) {
+    const root = cacheRoot(io.env, io.cwd);
+    try {
+      const r = await clearCache(root, repo?.key ?? null);
+      if (!opts.quiet) {
+        io.stderr(`jlgstat: removed ${formatInt(r.entries)} cached ${r.entries === 1 ? 'entry' : 'entries'} (${formatBytes(r.bytes)})${repo ? ` for ${repo.displayUrl}` : ''}\n`);
+      }
+    } catch (err) {
+      io.stderr(`jlgstat: error: cannot clear the cache ${root}: ${errorMessage(err)}\n`);
+      return EXIT_ERROR;
+    }
+    return EXIT_OK;
+  }
+
   let baseline: Report | null = null;
   try {
-    await checkDirectory(rootAbs, opts.path);
+    if (repo === null) await checkDirectory(rootAbs, opts.path);
     if (opts.compare !== null) baseline = await loadSnapshot(path.resolve(io.cwd, opts.compare));
   } catch (err) {
     if (err instanceof UsageError || err instanceof SnapshotError) {
@@ -87,6 +137,43 @@ export async function run(argv: readonly string[], io: RunIO): Promise<number> {
     throw err;
   }
 
+  let prepared: PreparedRepo | null = null;
+  if (repo !== null) {
+    try {
+      prepared = await prepareRepo(repo, {
+        ref: opts.ref,
+        keep: opts.keepClone,
+        env: io.env,
+        cwd: io.cwd,
+        interactive: io.stdinIsTTY === true,
+        onStatus: (m) => {
+          if (!opts.quiet) io.stderr(`jlgstat: ${m}\n`);
+        },
+        onWarning: (m) => io.stderr(`jlgstat: warning: ${m}\n`),
+      });
+    } catch (err) {
+      // Git failures carry their own context; anything else is a cache I/O error (disk full, permissions…).
+      io.stderr(`jlgstat: error: ${err instanceof RemoteError ? err.message : `cannot prepare ${repo.displayUrl}: ${errorMessage(err)}`}\n`);
+      return EXIT_ERROR;
+    }
+    rootAbs = prepared.analyzeDir;
+    if (opts.keepClone && !opts.quiet) io.stderr(`jlgstat: clone kept in ${prepared.entry}\n`);
+  }
+  try {
+    return await analyze(opts, io, version, rootAbs, baseline, prepared);
+  } finally {
+    await prepared?.dispose();
+  }
+}
+
+async function analyze(
+  opts: CliOptions,
+  io: RunIO,
+  version: string,
+  rootAbs: string,
+  baseline: Report | null,
+  prepared: PreparedRepo | null,
+): Promise<number> {
   const progress = createProgress(!opts.quiet, io.progressStream);
   const started = performance.now();
   let walkResult;
@@ -107,7 +194,8 @@ export async function run(argv: readonly string[], io: RunIO): Promise<number> {
 
   const report = buildReport(walkResult, {
     toolVersion: version,
-    root: displayRoot(io.cwd, rootAbs),
+    root: prepared ? remoteRoot(prepared) : displayRoot(io.cwd, rootAbs),
+    source: prepared?.source,
     all: opts.all,
     include: opts.include,
     exclude: opts.exclude,

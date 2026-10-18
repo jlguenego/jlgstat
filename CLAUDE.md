@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-`jlgstat` is a zero-config CLI (`npx jlgstat .`) that produces a quantitative report of a project: files, lines (code/comment/blank), extensions, languages, distribution, largest files and directories, categories, and snapshot comparison. It makes no network calls and uses no LLM. The output (terminal, help, JSON, docs) is in English.
+`jlgstat` is a zero-config CLI (`npx jlgstat .`) that produces a quantitative report of a project: files, lines (code/comment/blank), extensions, languages, distribution, largest files and directories, categories, and snapshot comparison. It makes no network calls (except fetching a repository given by URL, through the `git` command) and uses no LLM. The output (terminal, help, JSON, docs) is in English.
 
 ## Tooling: Bun for development, Node.js for users
 
@@ -35,6 +35,7 @@ The pipeline is orchestrated by `src/cli/run.ts`: `parseCliArgs` → `walk()` �
 
 - **scan/**: `walker.ts` walks directories asynchronously with a concurrency limiter. It applies, in order, default exclusions (`defaultExcludes.ts`; `bin/obj/target` only next to a project file), then nested `.gitignore` chains (always honored, even outside a Git repo; parent-directory `.gitignore` files are ignored), then `--include`, then `--exclude`, which always wins. `--all` skips the defaults and `.gitignore`. Symlinked directories are never followed; symlinked files are followed only inside the root. Every skip is counted in `excludedBreakdown`, and problems become `ScanWarning`s.
 - **read/**: `analyzeEntry()` takes a file path and returns an `EntryAnalysis` (sniffs binary and encoding, counts lines in a streaming way, classifies the file). `AnalyzerPool` runs it in-process for the first 300 files, then switches to `worker_threads` (CPU count − 1, at most 8; `JLGSTAT_WORKERS=n`, `0` = in-process). Workers only exist when `dist/read/worker.js` exists, so tests run from TypeScript sources stay in-process. `test/integration/dist.test.ts` checks that the worker results are identical to the in-process ones (it requires `bun run build`). `main.ts` raises `UV_THREADPOOL_SIZE` before any fs call.
+- **remote/**: analysis of a repository URL (§3.4). `url.ts` recognizes URLs (browser forms, credentials stripped for display), `fetch.ts` runs `git` (`init` + shallow `fetch` + `checkout` into `<entry>/git` and a `<entry>/tree` without `.git`, partial + sparse for a subdirectory, `.gitattributes` neutralized), `cache.ts` handles the cache (`JLGSTAT_CACHE_DIR`), `--keep-clone` and `--clear-cache`. `run.ts` analyzes the checked-out tree with the normal pipeline and disposes of it in `finally`. Tests serve a repository built at runtime through `file://` (`test/helpers/gitRepo.ts`).
 - **syntax/**: `languages.ts` is the versioned language table, grouped by syntax family; adding a language means adding an entry. `lineAnalyzer.ts` is a streaming string/comment state machine (LF/CRLF/CR, nested blocks, Python docstrings, very long lines processed in slices). A line that mixes code and a comment counts as code.
 - **classify/**: extension (lowercase; a dotfile with no other dot has `[no extension]`), generated-file detection (by path or name, header markers, minification), and a single category per file with precedence generated > tests > documentation > configuration > sources.
 - **aggregate/** and **report/**: pure functions that turn `FileRecord[]` into the report. `report/model.ts` is the source of truth for the JSON shape and **must stay in sync with `schema/jlgstat.schema.json`** and `schema/example.json`. The schema test and the CLI tests validate against the schema with Ajv. `SCHEMA_VERSION` is `major.minor`: a minor bump only adds fields, and `--compare` rejects snapshots with a different major version.
@@ -43,7 +44,7 @@ The pipeline is orchestrated by `src/cli/run.ts`: `parseCliArgs` → `walk()` �
 ## Invariants worth preserving
 
 - The output is deterministic: sorting by UTF-16 code unit, numbers formatted independently of the locale (`1,234,567`, sizes in base 1000), `/` path separators, and never an absolute root path in the report.
-- The tool is read-only: it writes only with `--output` (an atomic write).
+- The tool is read-only: it writes only with `--output` (an atomic write), and in its cache when analyzing a repository URL.
 - Test fixtures are created at runtime with `makeTree()`, so Git checkouts cannot alter CRLF line endings, BOMs or symlinks. Do not commit fixture trees.
 
 ## Specification

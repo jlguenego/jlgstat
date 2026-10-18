@@ -1,17 +1,17 @@
 # jlgstat — Spécification détaillée
 
-**Version :** 1.1  
+**Version :** 1.2  
 **Statut :** spécification de référence, points de conception arbitrés  
 **Date :** 17 octobre 2026
 
-`jlgstat` est un outil CLI npm (`npx jlgstat .`) qui produit une radiographie **quantitative** d'un projet informatique : inventaire par extension, volumes, distribution, principaux fichiers et répertoires. Il fonctionne sans analyse sémantique, sans LLM, sans appel réseau et sans configuration obligatoire.
+`jlgstat` est un outil CLI npm (`npx jlgstat .`) qui produit une radiographie **quantitative** d'un projet informatique : inventaire par extension, volumes, distribution, principaux fichiers et répertoires. Il fonctionne sans analyse sémantique, sans LLM, sans appel réseau (sauf pour récupérer un dépôt donné par son URL) et sans configuration obligatoire.
 
 ## Sommaire
 
 | Fichier | Sections |
 |---|---|
 | [01-vision-perimetre.md](01-vision-perimetre.md) | §1 Vision et objectifs · §2 Périmètre et priorités |
-| [02-interface-cli.md](02-interface-cli.md) | §3 Interface en ligne de commande, filtres, `--output` |
+| [02-interface-cli.md](02-interface-cli.md) | §3 Interface en ligne de commande, filtres, `--output`, dépôt distant par URL |
 | [03-parcours-comptage.md](03-parcours-comptage.md) | §4 Parcours, exclusions par défaut, conventions de comptage, encodages |
 | [04-metriques.md](04-metriques.md) | §5.1 – §5.4 Synthèse, extensions, distribution, répertoires |
 | [05-categories-commentaires.md](05-categories-commentaires.md) | §5.5 – §5.6 Catégories, blancs et commentaires, table de langages |
