@@ -1,11 +1,11 @@
 {
-  "schemaVersion": "1.1",
+  "schemaVersion": "1.2",
   "toolVersion": "1.0.0",
   "credit": "jlgstat: an idea by Jean-Louis GUENEGO (JLG), developed with AI.",
   "root": "src",
   "scan": {
     "mode": "default",
-    "durationMs": 21,
+    "durationMs": 23,
     "complete": true,
     "warnings": [],
     "excludedCount": 0,
@@ -59,39 +59,39 @@
     "caseInsensitiveGlobs": true
   },
   "summary": {
-    "files": 25,
-    "textFiles": 25,
+    "files": 29,
+    "textFiles": 29,
     "binaryFiles": 0,
     "unreadableFiles": 0,
-    "directories": 10,
+    "directories": 11,
     "maxDepth": 1,
-    "bytes": 109119,
-    "physicalLines": 3166,
-    "nonEmptyLines": 2901,
-    "blankLines": 265,
-    "codeLines": 2690,
-    "commentLines": 211,
-    "syntaxCoveredLines": 3166,
-    "classifiedSourceLines": 3166,
+    "bytes": 135870,
+    "physicalLines": 3834,
+    "nonEmptyLines": 3511,
+    "blankLines": 323,
+    "codeLines": 3244,
+    "commentLines": 267,
+    "syntaxCoveredLines": 3834,
+    "classifiedSourceLines": 3834,
     "extensions": 1,
     "languages": 1,
     "encodings": {
-      "utf-8": 25
+      "utf-8": 29
     }
   },
   "byExtension": [
     {
       "extension": ".ts",
-      "files": 25,
-      "textFiles": 25,
+      "files": 29,
+      "textFiles": 29,
       "binaryFiles": 0,
-      "bytes": 109119,
-      "physicalLines": 3166,
-      "nonEmptyLines": 2901,
-      "commentLines": 211,
-      "codeLines": 2690,
+      "bytes": 135870,
+      "physicalLines": 3834,
+      "nonEmptyLines": 3511,
+      "commentLines": 267,
+      "codeLines": 3244,
       "shareOfPhysicalLines": 1,
-      "meanLinesPerFile": 126.64
+      "meanLinesPerFile": 132.20689655172413
     }
   ],
   "byLanguage": [
@@ -100,33 +100,33 @@
       "extensions": [
         ".ts"
       ],
-      "files": 25,
-      "bytes": 109119,
-      "physicalLines": 3166,
-      "nonEmptyLines": 2901,
-      "commentLines": 211,
-      "codeLines": 2690,
+      "files": 29,
+      "bytes": 135870,
+      "physicalLines": 3834,
+      "nonEmptyLines": 3511,
+      "commentLines": 267,
+      "codeLines": 3244,
       "shareOfPhysicalLines": 1
     }
   ],
   "distribution": {
-    "textFiles": 25,
-    "mean": 126.64,
-    "p50": 88,
+    "textFiles": 29,
+    "mean": 132.20689655172413,
+    "p50": 104,
     "p90": 303,
-    "p99": 405,
-    "max": 405,
+    "p99": 406,
+    "max": 406,
     "over500": 0,
     "over1000": 0,
     "over5000": 0,
-    "top10LineShare": 0.7349968414403032
+    "top10LineShare": 0.6768388106416275
   },
   "largestFiles": [
     {
       "path": "report/terminal.ts",
       "extension": ".ts",
-      "physicalLines": 405,
-      "bytes": 15084,
+      "physicalLines": 406,
+      "bytes": 15200,
       "category": "sources",
       "encoding": "utf-8"
     },
@@ -155,10 +155,26 @@
       "encoding": "utf-8"
     },
     {
+      "path": "remote/fetch.ts",
+      "extension": ".ts",
+      "physicalLines": 251,
+      "bytes": 10319,
+      "category": "sources",
+      "encoding": "utf-8"
+    },
+    {
       "path": "report/model.ts",
       "extension": ".ts",
-      "physicalLines": 235,
-      "bytes": 5839,
+      "physicalLines": 249,
+      "bytes": 6381,
+      "category": "sources",
+      "encoding": "utf-8"
+    },
+    {
+      "path": "cli/run.ts",
+      "extension": ".ts",
+      "physicalLines": 230,
+      "bytes": 7553,
       "category": "sources",
       "encoding": "utf-8"
     },
@@ -171,10 +187,10 @@
       "encoding": "utf-8"
     },
     {
-      "path": "cli/run.ts",
+      "path": "cli/args.ts",
       "extension": ".ts",
-      "physicalLines": 144,
-      "bytes": 4650,
+      "physicalLines": 151,
+      "bytes": 6104,
       "category": "sources",
       "encoding": "utf-8"
     },
@@ -185,22 +201,6 @@
       "bytes": 5359,
       "category": "sources",
       "encoding": "utf-8"
-    },
-    {
-      "path": "cli/args.ts",
-      "extension": ".ts",
-      "physicalLines": 121,
-      "bytes": 4276,
-      "category": "sources",
-      "encoding": "utf-8"
-    },
-    {
-      "path": "classify/category.ts",
-      "extension": ".ts",
-      "physicalLines": 114,
-      "bytes": 3774,
-      "category": "sources",
-      "encoding": "utf-8"
     }
   ],
   "largestDirectories": [
@@ -208,9 +208,9 @@
       "path": "report",
       "depth": 1,
       "files": 5,
-      "bytes": 26174,
-      "physicalLines": 808,
-      "nonEmptyLines": 745
+      "bytes": 26984,
+      "physicalLines": 826,
+      "nonEmptyLines": 762
     },
     {
       "path": "syntax",
@@ -221,6 +221,14 @@
       "nonEmptyLines": 563
     },
     {
+      "path": "remote",
+      "depth": 1,
+      "files": 4,
+      "bytes": 21150,
+      "physicalLines": 532,
+      "nonEmptyLines": 480
+    },
+    {
       "path": "scan",
       "depth": 1,
       "files": 3,
@@ -229,20 +237,20 @@
       "nonEmptyLines": 416
     },
     {
+      "path": "cli",
+      "depth": 1,
+      "files": 3,
+      "bytes": 14520,
+      "physicalLines": 410,
+      "nonEmptyLines": 378
+    },
+    {
       "path": "read",
       "depth": 1,
       "files": 5,
       "bytes": 12590,
       "physicalLines": 347,
       "nonEmptyLines": 318
-    },
-    {
-      "path": "cli",
-      "depth": 1,
-      "files": 3,
-      "bytes": 9729,
-      "physicalLines": 292,
-      "nonEmptyLines": 265
     },
     {
       "path": "aggregate",
@@ -275,14 +283,6 @@
       "bytes": 804,
       "physicalLines": 34,
       "nonEmptyLines": 31
-    },
-    {
-      "path": "io",
-      "depth": 1,
-      "files": 1,
-      "bytes": 739,
-      "physicalLines": 20,
-      "nonEmptyLines": 19
     }
   ],
   "directories": [
@@ -306,9 +306,9 @@
       "path": "cli",
       "depth": 1,
       "files": 3,
-      "bytes": 9729,
-      "physicalLines": 292,
-      "nonEmptyLines": 265
+      "bytes": 14520,
+      "physicalLines": 410,
+      "nonEmptyLines": 378
     },
     {
       "path": "compare",
@@ -335,12 +335,20 @@
       "nonEmptyLines": 318
     },
     {
+      "path": "remote",
+      "depth": 1,
+      "files": 4,
+      "bytes": 21150,
+      "physicalLines": 532,
+      "nonEmptyLines": 480
+    },
+    {
       "path": "report",
       "depth": 1,
       "files": 5,
-      "bytes": 26174,
-      "physicalLines": 808,
-      "nonEmptyLines": 745
+      "bytes": 26984,
+      "physicalLines": 826,
+      "nonEmptyLines": 762
     },
     {
       "path": "scan",
@@ -408,10 +416,10 @@
     },
     {
       "category": "sources",
-      "files": 25,
-      "bytes": 109119,
-      "physicalLines": 3166,
-      "nonEmptyLines": 2901,
+      "files": 29,
+      "bytes": 135870,
+      "physicalLines": 3834,
+      "nonEmptyLines": 3511,
       "shareOfPhysicalLines": 1
     },
     {

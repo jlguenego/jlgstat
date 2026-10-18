@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://www.npmjs.com/package/jlgstat/schema/1.1",
+  "$id": "https://www.npmjs.com/package/jlgstat/schema/1.2",
   "title": "jlgstat report",
   "description": "JSON report produced by `jlgstat --json` (schema 1.x). Minor versions only add fields: consumers must ignore unknown fields.",
   "type": "object",
@@ -24,7 +24,22 @@
     "schemaVersion": { "type": "string", "pattern": "^1\\.\\d+$" },
     "toolVersion": { "type": "string" },
     "credit": { "type": "string", "description": "Authorship notice (added in schema 1.1)." },
-    "root": { "type": "string", "description": "Analyzed directory, relative to the working directory." },
+    "root": {
+      "type": "string",
+      "description": "Analyzed directory, relative to the working directory; for a repository URL, the URL without credentials followed by the analyzed subdirectory."
+    },
+    "source": {
+      "type": "object",
+      "description": "Remote repository, present only when a repository URL was analyzed (added in schema 1.2).",
+      "required": ["url", "ref", "commit", "path"],
+      "additionalProperties": false,
+      "properties": {
+        "url": { "type": "string", "description": "Repository URL without credentials." },
+        "ref": { "type": "string", "description": "Branch, tag or commit analyzed (the default branch when none was requested)." },
+        "commit": { "type": "string", "pattern": "^([0-9a-f]{40}|[0-9a-f]{64})$", "description": "Full SHA of the analyzed commit." },
+        "path": { "type": ["string", "null"], "description": "Analyzed subdirectory of the repository, or null for the whole repository." }
+      }
+    },
     "scan": {
       "type": "object",
       "required": [

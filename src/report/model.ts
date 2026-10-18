@@ -1,7 +1,7 @@
 // Report data model. This is the source of truth for the JSON output and
 // must stay in sync with schema/jlgstat.schema.json.
 
-export const SCHEMA_VERSION = '1.1';
+export const SCHEMA_VERSION = '1.2';
 
 /** Authorship notice shown in the help, the terminal report and the JSON report. */
 export const CREDIT = 'jlgstat: an idea by Jean-Louis GUENEGO (JLG), developed with AI.';
@@ -213,12 +213,26 @@ export interface Comparison {
   directories: { path: string; files: Delta; physicalLines: Delta; bytes: Delta }[];
 }
 
+/** Remote repository analyzed from a URL (schema 1.2, §7.2). */
+export interface RepositorySource {
+  /** Repository URL without credentials. */
+  url: string;
+  /** Branch, tag or commit actually analyzed (the default branch when none was requested). */
+  ref: string;
+  /** Full SHA of the analyzed commit. */
+  commit: string;
+  /** Analyzed subdirectory of the repository, or null for the whole repository. */
+  path: string | null;
+}
+
 export interface Report {
   schemaVersion: string;
   toolVersion: string;
   /** Authorship notice (schema 1.1). */
   credit: string;
   root: string;
+  /** Present only when a repository URL was analyzed (schema 1.2). */
+  source?: RepositorySource;
   scan: ScanInfo;
   summary: Summary;
   byExtension: ExtensionStats[];

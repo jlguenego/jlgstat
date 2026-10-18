@@ -196,6 +196,7 @@ export function renderTerminal(report: Report, o: TerminalOptions): string {
 
   // 1. Header.
   out.push(`${c.bold(c.cyan('jlgstat'))} ${c.dim(report.toolVersion)}  ${report.root}`);
+  if (report.source) out.push(c.dim('Revision: ') + `${report.source.ref} @ ${report.source.commit.slice(0, 12)}`);
   const modeText =
     scan.mode === 'all'
       ? `${c.yellow('all')} (exhaustive: .gitignore and default exclusions not applied)`

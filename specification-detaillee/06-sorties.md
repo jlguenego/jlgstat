@@ -6,7 +6,7 @@
 
 Rapport par défaut structuré ainsi :
 
-1. En-tête `jlgstat`, chemin cible, mode et durée.
+1. En-tête `jlgstat`, chemin cible (ou URL du dépôt, §3.4, suivie d'une ligne `Revision: <ref> @ <commit>`), mode et durée.
 2. Synthèse chiffrée : fichiers, lignes, taille, extensions.
 3. Tableau par extension (et regroupement par langage si pertinent, §5.2).
 4. Distribution : moyenne, P50/P90/P99, seuils et concentration top 10.
@@ -47,13 +47,14 @@ Le JSON est toujours complet, sans troncature.
 - **Mineur :** uniquement des ajouts de champs. Les consommateurs doivent ignorer les champs inconnus.
 - **Majeur :** renommage, suppression ou changement de sens d'un champ ; impose une version majeure de l'outil.
 - Schéma 1.1 : ajout du champ `credit` (mention d'auteur).
+- Schéma 1.2 : ajout du champ facultatif `source` (dépôt analysé par URL, §3.4).
 - Un JSON Schema formel est publié dans le paquet npm, accompagné de fixtures de référence.
 
 ### 7.2 Structure indicative
 
 ```json
 {
-  "schemaVersion": "1.1",
+  "schemaVersion": "1.2",
   "toolVersion": "1.0.0",
   "credit": "jlgstat: an idea by Jean-Louis GUENEGO (JLG), developed with AI.",
   "root": ".",
@@ -105,6 +106,19 @@ Le JSON est toujours complet, sans troncature.
   "categories": []
 }
 ```
+
+Pour un dépôt analysé par URL (§3.4), `root` contient l'URL sans identifiants, suivie du sous-dossier analysé, et le champ `source` (schéma 1.2) précise ce qui a été analysé ; il est absent pour un répertoire local :
+
+```json
+"source": {
+  "url": "https://github.com/owner/repo",
+  "ref": "main",
+  "commit": "bcc371b9533ee239e509dbb556ea3cfba6d915d0",
+  "path": "src"
+}
+```
+
+`ref` est la branche, le tag ou le commit effectivement analysé (la branche par défaut si aucune n'est demandée), `commit` le SHA complet, `path` le sous-dossier ou `null`.
 
 Les valeurs ci-dessus sont illustratives. Le rapport JSON doit être compact mais suffisamment descriptif pour un agent ; une IA n'a pas besoin de lire tous les fichiers pour obtenir ces métriques.
 

@@ -6,11 +6,11 @@ A quantitative X-ray of a software project, in one command:
 npx jlgstat .
 ```
 
-`jlgstat` inventories files by extension and language, counts physical, non-empty, code and comment lines, and shows the size distribution and the largest files and directories. It does no semantic analysis and uses no LLM. It makes no network calls and needs no configuration. It never modifies the analyzed files.
+`jlgstat` inventories files by extension and language, counts physical, non-empty, code and comment lines, and shows the size distribution and the largest files and directories. It does no semantic analysis and uses no LLM. It needs no configuration and makes no network calls, except to fetch a repository you give by URL. It never modifies the analyzed files.
 
 The report is readable by a human in a terminal, and with `--json` it can be consumed directly by scripts and AI agents. `jlgstat` itself consumes no tokens. An AI that later reads the report may.
 
-- Works on Windows, macOS and Linux. Requires Node.js ≥ 22 and nothing else.
+- Works on Windows, macOS and Linux. Requires Node.js ≥ 22, plus `git` only to analyze a repository by URL.
 - Deterministic: the same files and options produce the same report, whatever the locale or Git configuration of the machine.
 - No telemetry. Paths in the output are relative to the project.
 
@@ -19,7 +19,7 @@ The report is readable by a human in a terminal, and with `--json` it can be con
 ```text
 jlgstat [path] [options]
 
-path                  Directory to analyze (default: .)
+path                  Directory or Git repository URL to analyze (default: .)
 --json                Write a single JSON report to stdout
 --depth <n>           Maximum depth of the directory ranking (default: 2)
 --largest <n>         Number of files in the largest-files ranking (default: 10, 0 hides it)
@@ -28,6 +28,9 @@ path                  Directory to analyze (default: .)
 --exclude <glob>      Exclude matching files and directories (.gitignore syntax, repeatable)
 --compare <file>      Compare with an earlier JSON snapshot
 --output <file>       Write the report to a file (.json => JSON, otherwise plain text)
+--ref <ref>           Branch, tag or full commit SHA to analyze (URL only; default: default branch)
+--keep-clone          Keep the fetched repository in the jlgstat cache (reused on the next run)
+--clear-cache         Delete the kept repositories (all, or only those of the given URL) and exit
 --quiet               No progress indicator and no confirmation on stderr
 --no-color            Disable colors (NO_COLOR is also honored)
 -h, --help            Show help
@@ -43,19 +46,39 @@ npx jlgstat . --include "src/**" --exclude "*.test.ts"
 npx jlgstat . --json > before.json            # or: --output before.json
 npx jlgstat . --compare before.json
 npx jlgstat . --all
+npx jlgstat https://github.com/owner/repo    # a remote repository, see below
 ```
 
-`path` must be a single directory. To target specific files, use `--include`. Quote glob patterns so that the shell does not expand them.
+`path` must be a single directory or repository URL. To target specific files, use `--include`. Quote glob patterns so that the shell does not expand them.
 
 ### Exit codes
 
 | Code | Meaning |
 |---:|---|
 | `0` | Complete analysis |
-| `1` | Error that prevents the analysis: invalid option, missing or non-directory path, unreadable or incompatible snapshot, `--output` not writable |
+| `1` | Error that prevents the analysis: invalid option, missing or non-directory path, unreadable or incompatible snapshot, `--output` not writable; for a URL: `git` not found, repository not accessible, unknown ref or subdirectory |
 | `2` | Report produced but partial: unreadable files, files that disappeared during the analysis, access errors |
 
 Skipped symlinks, special files and informational warnings (files over 50 MB) do not cause exit code `2`.
+
+### Analyzing a remote repository
+
+Give the URL of a Git repository instead of a directory, as copied from the address bar of your browser if you like:
+
+```bash
+npx jlgstat https://github.com/owner/repo                      # latest commit of the default branch
+npx jlgstat https://github.com/owner/repo/tree/dev/src         # branch dev, only src/
+npx jlgstat git@github.com:owner/repo.git --ref v2.0.0         # a tag (or a branch, or a full commit SHA)
+npx jlgstat https://gitlab.com/group/repo/-/tree/main/lib --json
+```
+
+- **git is used.** `jlgstat` runs the `git` command of your machine, with your credentials (credential helper, SSH keys, proxy). Private repositories work as they do with `git clone`. This is the only case where `jlgstat` uses the network.
+- **Minimal download.** Only the requested commit is fetched, without history. For a subdirectory, only its files are downloaded when the server supports partial clone.
+- **Accepted URLs.** `https://`, `http://`, `ssh://`, `git://`, `file://` and `user@host:path`. Browser URLs of GitHub (`/tree/<ref>/<dir>`), GitLab (`/-/tree/<ref>/<dir>`) and Bitbucket (`/src/<ref>/<dir>`) select a ref and a subdirectory. `--ref` wins over the ref of the URL.
+- **Files as stored.** No end-of-line conversion and no Git filters are applied, so counts are the same on every OS. Git LFS files are counted as pointers; submodules are not fetched.
+- **Nothing left behind.** The copy goes to the jlgstat cache and is deleted at the end, even on error or Ctrl+C. With `--keep-clone` it is kept (its path is printed on stderr) and the next run updates it instead of downloading everything again. `jlgstat --clear-cache` deletes every kept copy, and `jlgstat <url> --clear-cache` only those of one repository.
+- **Cache location.** `JLGSTAT_CACHE_DIR` if set, otherwise `%LOCALAPPDATA%\jlgstat` (Windows), `~/Library/Caches/jlgstat` (macOS), `$XDG_CACHE_HOME/jlgstat` or `~/.cache/jlgstat` (Linux).
+- **Report.** `root` is the URL (credentials removed) followed by the subdirectory, and the JSON field `source` gives the URL, the analyzed ref, the full commit SHA and the subdirectory.
 
 ### Output streams
 
@@ -179,8 +202,9 @@ Known limitations:
 
 | Field | Content |
 |---|---|
-| `schemaVersion`, `toolVersion`, `root` | Versions and analyzed directory (relative) |
+| `schemaVersion`, `toolVersion`, `root` | Versions and analyzed directory (relative), or repository URL |
 | `credit` | Authorship notice (since schema 1.1) |
+| `source` | Only for a repository URL (since schema 1.2): `url`, `ref`, `commit`, `path` |
 | `scan` | Mode, duration, completeness, warnings, exclusion counts, default exclusion list, filters |
 | `summary` | Files (text/binary/unreadable), directories, depth, bytes, physical/non-empty/blank/code/comment lines, classified source lines, encodings |
 | `byExtension`, `byLanguage` | Files, bytes, lines, share of physical lines, mean lines per file |
