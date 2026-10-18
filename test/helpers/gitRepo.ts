@@ -11,8 +11,10 @@ export function hasGit(): boolean {
 /** Environment isolated from the user's and system git configuration (signing, templates, autocrlf…). */
 export async function isolatedGitEnv(extra: Record<string, string> = {}): Promise<Record<string, string | undefined>> {
   const home = await makeTree({ 'gitconfig.empty': '' });
+  // Drop every GIT_* variable of the developer (GIT_CONFIG_COUNT, GIT_TEMPLATE_DIR, GIT_DIR…).
+  const base = Object.fromEntries(Object.entries(process.env).filter(([k]) => !k.toUpperCase().startsWith('GIT_')));
   return {
-    ...process.env,
+    ...base,
     GIT_CONFIG_GLOBAL: path.join(home, 'gitconfig.empty'),
     GIT_CONFIG_NOSYSTEM: '1',
     GIT_AUTHOR_NAME: 'jlgstat test',
@@ -52,8 +54,12 @@ export async function makeGitRepo(): Promise<GitFixture> {
   const commit = async (tree: Tree, message: string): Promise<string> => {
     for (const [rel, content] of Object.entries(tree)) {
       const abs = path.join(dir, ...rel.split('/'));
+      if (content === null) {
+        await mkdir(abs, { recursive: true });
+        continue;
+      }
       await mkdir(path.dirname(abs), { recursive: true });
-      await writeFile(abs, content ?? '');
+      await writeFile(abs, content);
     }
     git('add', '-A');
     git('commit', '--quiet', '-m', message);

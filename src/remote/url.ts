@@ -100,10 +100,20 @@ export function parseRepoArg(arg: string): RepoSpec | null {
   // Over HTTP the user name often is a token: never shown. Over SSH it is an account name (`git@`).
   const shownUser = !isHttp && url.username !== '' ? `${url.username}@` : '';
   const clean = stripGitSuffix(repoPath);
+  // URL already drops the default HTTP(S) ports; 22 is the default of SSH, the same server as the scp-like form.
+  const port = url.port === '' || (scheme === 'ssh' && url.port === '22') ? '' : `:${url.port}`;
+  let browserRest: string | null = null;
+  if (rest !== null) {
+    try {
+      browserRest = decodeURIComponent(rest);
+    } catch {
+      throw new RemoteError(`invalid repository URL (malformed encoding): ${redact(arg)}`);
+    }
+  }
   return {
     cloneUrl: `${scheme}://${auth}${url.host}${repoPath}`,
     displayUrl: `${scheme}://${shownUser}${url.host}${clean}`,
-    key: `${url.hostname.toLowerCase()}${clean}`,
-    browserRest: rest === null ? null : decodeURIComponent(rest),
+    key: `${url.hostname.toLowerCase()}${port}${clean}`,
+    browserRest,
   };
 }

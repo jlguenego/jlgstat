@@ -96,7 +96,7 @@ export async function clearCache(root: string, key: string | null): Promise<Clea
     const leftovers = await readdir(tmpDir(root)).catch(() => [] as string[]);
     for (const name of leftovers) {
       const dir = path.join(tmpDir(root), name);
-      if ((await readMarker(dir)) === null && !name.startsWith('clone-')) continue;
+      if ((await readMarker(dir)) === null) continue;
       result.bytes += await sizeOf(dir);
       await removeDir(dir);
       result.entries++;

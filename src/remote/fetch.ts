@@ -127,6 +127,8 @@ export async function prepareRepo(spec: RepoSpec, o: PrepareOptions): Promise<Pr
     '-c',
     'protocol.ext.allow=never',
     '-c',
+    'submodule.recurse=false',
+    '-c',
     'core.fsmonitor=false',
     '-c',
     'core.longpaths=true',
@@ -189,6 +191,10 @@ export async function prepareRepo(spec: RepoSpec, o: PrepareOptions): Promise<Pr
     o.onStatus?.(`${reuse ? 'updating' : 'fetching'} ${spec.displayUrl} @ ${resolved.name}${subPath ? ` (${subPath}/)` : ''}`);
     const g = (args: string[]): Promise<string> => git([`--git-dir=${gitDir}`, ...args], tree);
     await ensureDir(tree);
+    if (!reuse) {
+      // Marked from the start, so that --clear-cache recognizes the leftovers of an interrupted run.
+      await writeMarker(entry, { url: spec.displayUrl, key: spec.key, ref: requested, path: subPath, commit: '', lastUsed: new Date().toISOString() });
+    }
     if (reuse) {
       await g(['remote', 'set-url', 'origin', spec.cloneUrl]);
     } else {
@@ -210,7 +216,7 @@ export async function prepareRepo(spec: RepoSpec, o: PrepareOptions): Promise<Pr
       partial = true;
     }
 
-    const fetchArgs = ['fetch', '--quiet', '--depth', '1', '--no-tags', 'origin', resolved.target];
+    const fetchArgs = ['fetch', '--quiet', '--depth', '1', '--no-tags', '--no-recurse-submodules', 'origin', resolved.target];
     try {
       await g(partial ? [...fetchArgs.slice(0, -2), '--filter=blob:none', ...fetchArgs.slice(-2)] : fetchArgs);
     } catch (err) {
@@ -220,7 +226,7 @@ export async function prepareRepo(spec: RepoSpec, o: PrepareOptions): Promise<Pr
       await g(fetchArgs);
     }
     const commit = (await g(['rev-parse', '--verify', '--quiet', 'FETCH_HEAD^{commit}'])).trim();
-    await g(['checkout', '--quiet', '--force', '--detach', commit]);
+    await g(['checkout', '--quiet', '--force', '--no-recurse-submodules', '--detach', commit]);
     if (reuse) await g(['clean', '-ffdxq']);
 
     const analyzeDir = subPath === null ? tree : path.join(tree, ...subPath.split('/'));

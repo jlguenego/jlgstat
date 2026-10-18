@@ -40,7 +40,7 @@
 | 32 | Fichiers générés | Chemin + marqueurs d'en-tête + minification, dès la V1 | §5.5.1 |
 | 33 | Outillage de développement | Bun (install, `bun.lock`, scripts, tests, pack) ; runtime publié inchangé : Node.js ≥ 22 | §9.1 |
 | 34 | Mention d'auteur | `jlgstat: an idea by Jean-Louis GUENEGO (JLG), developed with AI.` en fin d'aide, en pied du rapport terminal et dans le champ JSON `credit` (schéma 1.1) | §6, §7.2 |
-| 35 | Dépôt par URL | L'argument peut être une URL Git (https, ssh, git, file, SCP), y compris une URL de navigateur avec ref et sous-dossier ; un répertoire local existant reste prioritaire | §3.4 |
+| 35 | Dépôt par URL | L'argument peut être une URL Git (https, http, ssh, git, file, SCP), y compris une URL de navigateur avec ref et sous-dossier ; un répertoire local existant reste prioritaire | §3.4 |
 | 36 | Réseau et `git` | Réseau uniquement pour une URL explicite, via la commande `git` de la machine et ses authentifications ; pas de client Git embarqué | §1, §3.4 |
 | 37 | Récupération | `init` + `fetch --depth 1` ; fetch partiel et sparse checkout pour un sous-dossier ; arbre sans `.git` ; fichiers tels que stockés | §3.4 |
 | 38 | `--ref` | Branche, tag ou SHA complet ; l'emporte sur la ref de l'URL, avec avertissement | §3.4 |

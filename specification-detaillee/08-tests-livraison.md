@@ -20,7 +20,7 @@
 - `--output` : écrasement, choix du format par extension, écriture atomique.
 - Comparaison avec zéro initial, snapshots non homogènes et version majeure incompatible.
 - Codes de sortie `0`, `1` et `2`.
-- Dépôt par URL (§3.4), sans réseau : dépôt Git créé à l'exécution et servi par une URL `file://` ; branche par défaut, `--ref` (branche, tag, SHA), sous-dossier et ref contenant `/`, priorité de `--ref`, fichiers comptés tels que stockés, absence de `.git` avec `--all`, suppression de la copie, `--keep-clone` puis réutilisation, `--clear-cache` global et ciblé, ref inexistante, `git` absent, identifiants masqués. Analyse des URLs de navigateur (GitHub, GitLab, Bitbucket, SCP) en tests unitaires.
+- Dépôt par URL (§3.4), sans réseau : dépôt Git créé à l'exécution et servi par une URL `file://` ; branche par défaut, `--ref` (branche, tag, SHA), sous-dossier et ref contenant `/`, priorité de `--ref`, fichiers comptés tels que stockés, absence de `.git` avec `--all`, suppression de la copie, `--keep-clone` puis réutilisation, `--clear-cache` global et ciblé, ref inexistante, `git` absent, identifiants masqués. En tests unitaires : reconnaissance des URLs (schémas, forme SCP, port, identifiants) et découpage des URLs de navigateur (GitHub, GitLab, Bitbucket).
 
 ### 11.2 Matrice de compatibilité
 

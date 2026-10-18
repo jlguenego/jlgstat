@@ -82,7 +82,7 @@ Les URLs copiées depuis le navigateur sont décomposées en *dépôt + ref + so
 - **Sans `--keep-clone`** : on clone dans `<cache>/tmp/`, puis on le supprime à la fin.
 - **Avec `--keep-clone`** : le clone est créé (ou réutilisé) dans le cache et conservé. Son chemin est affiché sur stderr.
 - **Entrée déjà présente dans le cache** : elle est **réutilisée et mise à jour** par un fetch superficiel (`--depth 1`) suivi d'un reset sur la ref, avec ou sans `--keep-clone`. Sans `--keep-clone`, l'entrée est supprimée à la fin du run. Le cache n'est donc persistant que tant que l'utilisateur le demande.
-- La suppression est garantie aussi en cas d'erreur et sur SIGINT/SIGTERM.
+- La suppression est garantie en cas d'erreur. Sur SIGINT/SIGTERM, elle est tentée ; si le système la refuse, le reste est éliminé par `--clear-cache`, qui le reconnaît grâce au marqueur écrit dès la création de la copie.
 
 ### Option `--clear-cache`
 

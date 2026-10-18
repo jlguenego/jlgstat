@@ -85,6 +85,17 @@ describe('repository URL recognition (§3.4)', () => {
     expect(() => parseRepoArg('https://github.com/')).toThrow(RemoteError);
   });
 
+  test('malformed percent-encoding is a RemoteError, without credentials', () => {
+    expect(() => parseRepoArg('https://u:s3cret@github.com/o/r/tree/main/%E0%A4%A')).toThrow(/malformed encoding\): https:\/\/github\.com/);
+  });
+
+  test('a non-default port is part of the repository identity', () => {
+    expect(parseRepoArg('https://example.com:8443/o/r')!.key).toBe('example.com:8443/o/r');
+    expect(parseRepoArg('https://example.com:443/o/r')!.key).toBe('example.com/o/r');
+    expect(parseRepoArg('ssh://git@example.com:22/o/r')!.key).toBe(parseRepoArg('git@example.com:o/r')!.key);
+    expect(parseRepoArg('ssh://git@example.com:2222/o/r')!.key).toBe('example.com:2222/o/r');
+  });
+
   test('file:// URLs keep their path for git', () => {
     const s = parseRepoArg('file:///C:/repos/r.git/')!;
     expect(s.cloneUrl).toBe('file:///C:/repos/r.git');
@@ -99,6 +110,7 @@ describe('remote refs', () => {
       'aaaa\tHEAD',
       'aaaa\trefs/heads/main',
       'bbbb\trefs/heads/feature/x',
+      'eeee\trefs/heads/feature',
       'cccc\trefs/tags/v1.0',
       'dddd\trefs/tags/v1.0^{}',
       '',
@@ -107,7 +119,7 @@ describe('remote refs', () => {
 
   test('ls-remote output', () => {
     expect(remote.defaultBranch).toBe('main');
-    expect([...remote.refs].sort()).toEqual(['HEAD', 'refs/heads/feature/x', 'refs/heads/main', 'refs/tags/v1.0']);
+    expect([...remote.refs].sort()).toEqual(['HEAD', 'refs/heads/feature', 'refs/heads/feature/x', 'refs/heads/main', 'refs/tags/v1.0']);
   });
 
   test('the longest branch or tag splits a browser path', () => {

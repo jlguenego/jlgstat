@@ -78,9 +78,11 @@ Les protections de sécurité (liens symboliques de répertoires, fichiers spéc
 
 L'argument `path` peut être l'URL d'un dépôt Git. `jlgstat` récupère alors le minimum nécessaire avec la commande `git` installée sur la machine, analyse le résultat exactement comme un répertoire local (mêmes options : `--json`, `--output`, `--compare`, `--include`, `--exclude`, `--all`…), puis supprime la copie.
 
+**Sous-modules.** Jamais récupérés, quelle que soit la configuration Git de la machine (`submodule.recurse`).
+
 **Dépendance à `git`.** `jlgstat` délègue la récupération à `git` et en hérite les mécanismes d'authentification (credential helper, clés SSH, proxy). Aucun client Git n'est embarqué. Si `git` est absent du PATH : message explicite et code `1`. L'analyse d'un répertoire local n'utilise jamais `git`.
 
-**URLs reconnues.** Un argument est une URL s'il commence par `https://`, `http://`, `ssh://`, `git://` ou `file://`, ou s'il a la forme SCP `user@host:chemin`. Un répertoire local existant portant ce nom reste prioritaire. Le suffixe `.git`, la barre oblique finale, la query string et le fragment sont ignorés pour l'identité du dépôt.
+**URLs reconnues.** Un argument est une URL s'il commence par `https://`, `http://`, `ssh://`, `git://` ou `file://`, ou s'il a la forme SCP `user@host:chemin`. Un répertoire local existant portant ce nom reste prioritaire. Le suffixe `.git`, la barre oblique finale, la query string et le fragment sont ignorés pour l'identité du dépôt ; un port non standard en fait partie.
 
 **URLs copiées du navigateur.** Elles sont décomposées en *dépôt + ref + sous-dossier* :
 
@@ -100,11 +102,11 @@ Un nom de ref pouvant contenir des `/`, le découpage retient la plus longue bra
 
 **Cache et `--keep-clone`.** Le cache se trouve dans `JLGSTAT_CACHE_DIR` si cette variable est définie, sinon dans `%LOCALAPPDATA%\jlgstat` (Windows), `~/Library/Caches/jlgstat` (macOS) ou `$XDG_CACHE_HOME/jlgstat` (à défaut `~/.cache/jlgstat`, Linux).
 
-- Sans `--keep-clone`, la copie est faite dans `<cache>/tmp/` et supprimée à la fin, que l'analyse réussisse, échoue ou soit interrompue (Ctrl+C).
-- Avec `--keep-clone`, la copie est conservée dans `<cache>/repos/`, une entrée par dépôt, ref demandée et sous-dossier ; son chemin est écrit sur stderr.
+- Sans `--keep-clone`, la copie est faite dans `<cache>/tmp/` et supprimée à la fin, que l'analyse réussisse ou échoue. Sur interruption (Ctrl+C), la suppression est tentée ; si le système la refuse, le reste est éliminé par `--clear-cache`.
+- Avec `--keep-clone`, la copie est conservée dans `<cache>/repos/`, une entrée par dépôt, ref demandée et sous-dossier ; son chemin est écrit sur stderr (sauf `--quiet`).
 - Si une entrée conservée existe, elle est réutilisée et mise à jour (fetch superficiel) ; sans `--keep-clone`, elle est supprimée à la fin du run.
 
-**`--clear-cache`.** `jlgstat --clear-cache` supprime toutes les entrées conservées et les restes de runs interrompus, affiche le nombre d'entrées et la place libérée, puis quitte avec le code `0` sans analyse. `jlgstat <url> --clear-cache` ne supprime que les entrées de ce dépôt. Seuls les dossiers portant le marqueur `jlgstat-entry.json` sont supprimés.
+**`--clear-cache`.** `jlgstat --clear-cache` supprime toutes les entrées conservées et les restes de runs interrompus, affiche le nombre d'entrées et la place libérée, puis quitte avec le code `0` sans analyse (message supprimé par `--quiet`). `jlgstat <url> --clear-cache` ne supprime que les entrées de ce dépôt. Seuls les dossiers portant le marqueur `jlgstat-entry.json`, écrit dès la création de chaque copie, sont supprimés. Un répertoire local dont le nom ressemble à une URL est refusé (code `1`).
 
 **Messages.** Sauf `--quiet`, `jlgstat` écrit sur stderr le dépôt et la ref récupérés. Les identifiants éventuellement présents dans l'URL (`https://user:token@…`) n'apparaissent jamais dans les messages ni dans le rapport.
 

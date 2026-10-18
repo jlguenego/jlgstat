@@ -104,8 +104,8 @@ export async function run(argv: readonly string[], io: RunIO): Promise<number> {
     return EXIT_ERROR;
   }
   if (repo !== null && (await isDirectory(rootAbs))) {
-    if (opts.ref !== null || opts.keepClone) {
-      io.stderr(`jlgstat: error: ${opts.path} is a local directory; --ref and --keep-clone apply to repository URLs\n`);
+    if (opts.ref !== null || opts.keepClone || opts.clearCache) {
+      io.stderr(`jlgstat: error: ${opts.path} is a local directory; --ref, --keep-clone and --clear-cache apply to repository URLs\n`);
       return EXIT_ERROR;
     }
     repo = null;
@@ -115,7 +115,9 @@ export async function run(argv: readonly string[], io: RunIO): Promise<number> {
     const root = cacheRoot(io.env, io.cwd);
     try {
       const r = await clearCache(root, repo?.key ?? null);
-      io.stderr(`jlgstat: removed ${formatInt(r.entries)} cached ${r.entries === 1 ? 'entry' : 'entries'} (${formatBytes(r.bytes)})${repo ? ` for ${repo.displayUrl}` : ''}\n`);
+      if (!opts.quiet) {
+        io.stderr(`jlgstat: removed ${formatInt(r.entries)} cached ${r.entries === 1 ? 'entry' : 'entries'} (${formatBytes(r.bytes)})${repo ? ` for ${repo.displayUrl}` : ''}\n`);
+      }
     } catch (err) {
       io.stderr(`jlgstat: error: cannot clear the cache ${root}: ${errorMessage(err)}\n`);
       return EXIT_ERROR;
@@ -150,8 +152,8 @@ export async function run(argv: readonly string[], io: RunIO): Promise<number> {
         onWarning: (m) => io.stderr(`jlgstat: warning: ${m}\n`),
       });
     } catch (err) {
-      if (!(err instanceof RemoteError)) throw err;
-      io.stderr(`jlgstat: error: ${err.message}\n`);
+      // Git failures carry their own context; anything else is a cache I/O error (disk full, permissions…).
+      io.stderr(`jlgstat: error: ${err instanceof RemoteError ? err.message : `cannot prepare ${repo.displayUrl}: ${errorMessage(err)}`}\n`);
       return EXIT_ERROR;
     }
     rootAbs = prepared.analyzeDir;

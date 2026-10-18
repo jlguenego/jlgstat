@@ -1,5 +1,5 @@
 import { existsSync } from 'node:fs';
-import { mkdir, readdir, readFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { Ajv } from 'ajv';
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
@@ -143,9 +143,30 @@ describe.skipIf(!hasGit())('repository URL (§3.4)', () => {
     expect(targeted.stderr).toMatch(/removed 2 cached entries/);
     expect(await listDir(path.join(cache, 'repos'))).toHaveLength(2);
 
+    // Leftovers of interrupted runs: removed only when marked.
+    await mkdir(path.join(cache, 'tmp', 'clone-unmarked'), { recursive: true });
+    await mkdir(path.join(cache, 'tmp', 'clone-marked'), { recursive: true });
+    await writeFile(path.join(cache, 'tmp', 'clone-marked', MARKER), '{}');
+
     const all = await runRemote(['--clear-cache'], cache);
-    expect(all.stderr).toMatch(/removed 1 cached entry/);
+    expect(all.stderr).toMatch(/removed 2 cached entries/);
     expect(await listDir(path.join(cache, 'repos'))).toEqual(['not-ours']);
+    expect(await listDir(path.join(cache, 'tmp'))).toEqual(['clone-unmarked']);
+
+    const quiet = await runRemote(['--clear-cache', '--quiet'], cache);
+    expect(quiet.code).toBe(0);
+    expect(quiet.stderr).toBe('');
+  });
+
+  // A directory name with ":" cannot be created on Windows.
+  test.skipIf(process.platform === 'win32')('--clear-cache refuses a local directory that looks like a URL', async () => {
+    const cache = await makeTree({});
+    await runRemote([repo.url, '--keep-clone', '--quiet'], cache);
+    const cwd = await makeTree({ 'git@host:o/r/a.ts': 'x\n' });
+    const r = await runCli(['git@host:o/r', '--clear-cache'], cwd, { ...repo.env, JLGSTAT_CACHE_DIR: cache });
+    expect(r.code).toBe(1);
+    expect(r.stderr).toContain('is a local directory');
+    expect(await listDir(path.join(cache, 'repos'))).toHaveLength(1);
   });
 
   test('without git in PATH, a URL is an error and a local directory still works', async () => {
